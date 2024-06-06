@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import requests
 import json
 
-#update 2
+#update 3
 load_dotenv()
 
 # Инициализация бота
