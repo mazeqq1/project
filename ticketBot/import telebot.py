@@ -2,7 +2,7 @@ import telebot
 from telebot import types
 
 
-#bot = telebot.TeleBot('6446445257:AAGOIh1ShlDZUsdvRrnQHlUMraaEFy9lx2s', skip_pending=True)
+#bot = telebot.TeleBot('', skip_pending=True)
 
 
 

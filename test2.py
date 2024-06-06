@@ -5,13 +5,13 @@ import os
 from dotenv import load_dotenv
 import requests
 import json
-API = 'cd0713ea0f7d65875882f0dd6204c414'
+API = ''
 
 load_dotenv()
 
 # Инициализация бота
 
-bot = telebot.TeleBot('7287247319:AAGfSSjVjBx2OXd6RrwCJuo-8Pg9udYng3o')
+bot = telebot.TeleBot('')
 
 # Создаем базу данных
 conn = sqlite3.connect(r'authBot\users.db', check_same_thread=False)
