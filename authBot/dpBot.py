@@ -43,11 +43,13 @@ def start(message):
 @bot.message_handler(func=lambda message: True) 
 def authORlogin(message):
     if message.text == 'Регистрация':
-        auth_markup = types.ReplyKeyboardRemove()
+        back_markup = types.ReplyKeyboardMarkup(True, True)
+        back = types.KeyboardButton('Вернуться')
+        back_markup.add(back)
+        
+        bot.send_message(message.chat.id, 'Введите логин:', reply_markup=back_markup)
         bot.register_next_step_handler(message, auth_login)
-        bot.send_message(message.chat.id, 'Введите логин:',reply_markup=types.ReplyKeyboardRemove())
     elif message.text == 'Войти':
-        auth_markup = types.ReplyKeyboardRemove()
         bot.send_message(message.chat.id, 'Введите логин:',reply_markup=types.ReplyKeyboardRemove())
         bot.register_next_step_handler(message,log_login )
     elif message.text == '/start':
@@ -59,16 +61,32 @@ def authORlogin(message):
 # auth state
 @bot.message_handler(func=lambda message: True)
 def auth_login(message):
-    auth_login = message.text
-    bot.send_message(message.chat.id, 'Введите пароль:')
-    bot.register_next_step_handler(message, auth_password, auth_login)
+    auth_markup = types.InlineKeyboardMarkup()
+    auth = types.InlineKeyboardButton('Регистрация', callback_data='back_auth')
+    log = types.InlineKeyboardButton('Войти', callback_data='back_login')
+    auth_markup.add(auth,log)
+    if message.text == 'Вернуться':
+        bot.send_message(message.chat.id, 'Регистация/Вход', reply_markup=auth_markup)
+    else:
+        auth_login = message.text
+        bot.send_message(message.chat.id, 'Введите пароль:')
+        bot.register_next_step_handler(message, auth_password, auth_login)
 
 def auth_password(message, auth_login):
+    auth_markup = types.InlineKeyboardMarkup()
+    auth = types.InlineKeyboardButton('Регистрация', callback_data='back_auth')
+    log = types.InlineKeyboardButton('Войти', callback_data='back_login')
+    auth_markup.add(auth,log)
     auth_password = message.text
-    user_id = message.chat.id
-    print(user_id)
-    login = check_login(auth_login)
-    id_check = check_id(user_id)
+    if auth_password == 'Вернуться':
+        bot.send_message(message.chat.id, 'Регистация/Вход', reply_markup=auth_markup)
+        
+    elif auth_password != 'Вернуться':
+        auth_password = message.text
+        user_id = message.chat.id
+        print(user_id)
+        login = check_login(auth_login)
+        id_check = check_id(user_id)
 
 #0=not in db 1=in db
     if login == 0 and id_check == 0:
@@ -205,10 +223,14 @@ def callback(call):
     elif call.data == 'no':
         bot.send_message(call.message.chat.id, 'Ну нет так нет')
         bot.answer_callback_query(callback_query_id=call.id, text='Нет')
-        
-
-
-
+    elif call.data == 'back_auth':
+        bot.send_message(call.message.chat.id, 'Введите логин:')
+        bot.answer_callback_query(callback_query_id=call.id, text='Регистрация')
+        bot.register_next_step_handler(call.message, auth_login)
+    elif call.data == 'back_login':
+        bot.send_message(call.message.chat.id, 'Введите логин:')
+        bot.answer_callback_query(callback_query_id=call.id, text='Вход')
+        bot.register_next_step_handler(call.message, log_login)
 
 
     
